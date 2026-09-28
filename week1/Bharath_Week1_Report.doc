@@ -1,0 +1,41 @@
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head><title>Week 1 Task Report</title></head>
+<body style="font-family: 'Calibri', Arial, sans-serif; font-size: 11pt;">
+
+<h2 style="text-align: center; color: #2c3e50;">Week 1 Task Report: Transforming Wireframes into Static Web Pages</h2>
+<p><strong>Project Name:</strong> FlowAI Workspace</p>
+<p><strong>GitHub Repository:</strong> <a href="https://github.com/BharathKumar1607/FlowAI-Workspace">https://github.com/BharathKumar1607/FlowAI-Workspace</a></p>
+<hr>
+
+<h3>1. Objective</h3>
+<p>The objective of this Week 1 task was to successfully translate a provided wireframe concept (an AI Chat Dashboard) into a fully functional, pixel-perfect static web page. This required building a solid foundation using HTML5 for structure and CSS3 for styling and responsiveness.</p>
+
+<h3>2. Design Decisions & Layout Strategies</h3>
+<p>To ensure the application looks professional and is easy to maintain, I implemented several modern web development strategies:</p>
+<ul>
+    <li><strong>Semantic HTML5:</strong> Instead of relying solely on generic &lt;div&gt; tags, I used semantic tags like &lt;header&gt;, &lt;aside&gt; (for the sidebar), &lt;main&gt; (for the chat workspace), and &lt;footer&gt;. This improves the code's readability and ensures accessibility standards are met.</li>
+    <li><strong>CSS Flexbox Layout:</strong> The primary challenge of the wireframe was the side-by-side dashboard layout. I solved this by wrapping the Sidebar and Main Workspace in an .app-container div and applying display: flex. This allowed the sidebar to maintain a fixed width of 260px while the chat area fluidly expanded to fill the remaining space.</li>
+    <li><strong>Viewport Sizing:</strong> To mimic a true web-application experience (where the page itself doesn't scroll, only the chat thread does), I set the body height to 100vh and set the chat thread to overflow-y: auto.</li>
+</ul>
+
+<h3>3. Responsiveness</h3>
+<p>To ensure the design adapts to multiple screen sizes, I implemented CSS Media Queries at the bottom of my stylesheet. Specifically, I added a breakpoint at 768px (tablet and mobile view). When the screen shrinks below this width:</p>
+<ul>
+    <li>The .app-container switches from a horizontal row to a vertical column (flex-direction: column).</li>
+    <li>The sidebar loses its fixed width and border, adapting to 100% of the screen width and stacking neatly on top of the chat area.</li>
+    <li>The navigation links in the header wrap to a new line to prevent overlapping.</li>
+</ul>
+
+<h3>4. Challenges Encountered & Problem Solving</h3>
+<ul>
+    <li><strong>Challenge - Linking HTML to CSS Classes:</strong> Initially, I encountered an issue where the CSS styles were not applying correctly because the HTML structure was using old class names from an earlier draft of the layout.</li>
+    <li><strong>Resolution:</strong> I learned that CSS styling is strictly dependent on the HTML structure. By carefully auditing my index.html file and ensuring that every class matched the CSS selectors perfectly, I was able to snap the layout into place.</li>
+    <li><strong>Challenge - Default Browser Margins:</strong> The layout initially had a small, unwanted white border around the edges of the screen.</li>
+    <li><strong>Resolution:</strong> I implemented a "CSS Reset" at the top of the file. This unified the default spacing rules across all web browsers and allowed the application to touch the absolute edges of the screen.</li>
+</ul>
+
+<h3>5. Conclusion</h3>
+<p>This task successfully built my foundational workflow for front-end development. By manually coding the HTML structure and styling it from scratch, I gained a deep understanding of Flexbox, semantic markup, and the critical importance of keeping HTML and CSS classes synchronized.</p>
+
+</body>
+</html>
