@@ -1,0 +1,72 @@
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head><title>Week 2 Task Report</title></head>
+<body style="font-family: 'Calibri', Arial, sans-serif; font-size: 11pt; line-height: 1.5;">
+
+<h2 style="text-align: center; color: #2c3e50;">Week 2 Task Report: Advanced Responsive Web Design</h2>
+<p><strong>Intern Name:</strong> Bharath Kumar</p>
+<p><strong>Project Name:</strong> FlowAI Workspace (Week 2 - Responsive Grid & Fluid Media)</p>
+<p><strong>GitHub Branch:</strong> <a href="https://github.com/BharathKumar1607/FlowAI-Workspace/tree/week-2">https://github.com/BharathKumar1607/FlowAI-Workspace/tree/week-2</a></p>
+<hr>
+
+<h3>1. Executive Summary & Objective</h3>
+<p>The primary objective of the Week 2 internship task was to engineer a responsive web interface from scratch capable of adapting gracefully across all screen viewports—including desktop monitors, tablets, and smartphones. This task specifically emphasized the mastery of CSS Media Queries, Flexible CSS Grids (using fractional units), and Fluid Images to prevent layout breakage and ensure an optimal user experience across any device.</p>
+
+<h3>2. Architecture & Design Implementation</h3>
+<p>Building upon the foundational FlowAI dashboard, the application architecture was overhauled to adopt modern two-dimensional CSS Grid systems and fluid media constraints:</p>
+<ul>
+    <li><strong>Flexible CSS Grid (.app-layout):</strong> Unlike one-dimensional Flexbox, CSS Grid was implemented for the root layout (<code>display: grid; grid-template-columns: 260px 1fr;</code>). This allocates a fixed 260px column to the navigation sidebar while permitting the primary AI workspace to dynamically claim the remaining viewport fraction (<code>1fr</code>).</li>
+    <li><strong>Nested Multi-Column Prompt Grid (.prompt-grid):</strong> A secondary grid system was implemented within the main workspace to display AI action cards. By utilizing <code>grid-template-columns: repeat(3, 1fr); gap: 20px;</code>, cards maintain uniform dimensions and spacing automatically.</li>
+    <li><strong>Fluid Image Principles:</strong> To eliminate horizontal scrolling and image clipping, universal fluid constraints were instituted:
+        <pre style="background: #f4f4f4; padding: 10px; border-radius: 4px;">img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}</pre>
+        This ensures that prompt card thumbnails, the logo icon, and sidebar promotional banners dynamically scale down proportionally with their parent containers.
+    </li>
+    <li><strong>Semantic HTML Structure:</strong> The document hierarchy adheres strictly to HTML5 accessibility standards using <code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;aside&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;section&gt;</code>, and <code>&lt;footer&gt;</code>.</li>
+</ul>
+
+<h3>3. Multi-Tier Viewport Adjustments (Media Queries)</h3>
+<p>To ensure fluid responsiveness across various hardware profiles, three discrete viewport breakpoints were established in the stylesheet:</p>
+
+<table border="1" cellpadding="6" cellspacing="0" style="border-collapse: collapse; width: 100%; font-size: 10.5pt;">
+    <thead style="background-color: #2c3e50; color: #ffffff;">
+        <tr>
+            <th>Viewport Device</th>
+            <th>Breakpoint Target</th>
+            <th>Layout & Component Behavior</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Desktop</strong></td>
+            <td>&gt; 1024px</td>
+            <td>Full horizontal navigation bar, 260px fixed sidebar, and 3-column prompt card grid. Maximum screen estate utilization.</td>
+        </tr>
+        <tr>
+            <td><strong>Tablet</strong></td>
+            <td>&le; 1024px</td>
+            <td>Sidebar narrows to 200px to preserve workspace breathing room. Card grid drops from 3 columns down to 2 columns (<code>repeat(2, 1fr)</code>).</td>
+        </tr>
+        <tr>
+            <td><strong>Smartphone</strong></td>
+            <td>&le; 768px</td>
+            <td>Root grid drops from 2 columns to a single column (<code>1fr</code>), stacking the sidebar cleanly above the workspace. Prompt cards collapse into a single vertical column. Header text navigation hides, revealing a responsive menu toggle.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>4. Challenges Encountered & Key Learnings</h3>
+<ul>
+    <li><strong>Issue - Aspect Ratio Distortion in Cards:</strong> When resizing browser widths, fixed-dimension images caused prompt cards to stretch unevenly.
+    <br><em>Resolution:</em> Replaced fixed pixel widths with fluid CSS rules (<code>width: 100%; height: auto;</code>) combined with <code>box-sizing: border-box;</code>, allowing images to scale perfectly with their surrounding card borders.</li>
+    <li><strong>Issue - Local Debugging in VS Code:</strong> The browser debugger initially failed with a connection error attempting to reach <code>localhost:8080</code>.
+    <br><em>Resolution:</em> Configured <code>.vscode/launch.json</code> with direct file launching (<code>"file": "${workspaceFolder}/week2/index.html"</code>), enabling immediate testing without needing a local development server.</li>
+</ul>
+
+<h3>5. Conclusion</h3>
+<p>The Week 2 task successfully reinforced advanced responsive engineering methodologies. The resulting web application smoothly reorganizes its elements across screen orientations without UI degradation, demonstrating proficient command of CSS Grids, fluid image mathematics, and targeted media queries.</p>
+
+</body>
+</html>
