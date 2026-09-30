@@ -3,43 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="FlowAI Workspace - High-Performance, WCAG 2.1 AA Accessible AI Assistant Dashboard.">
-    <title>FlowAI Workspace - AI Chat Dashboard</title>
+    <meta name="description" content="FlowAI Workspace - Single Page Application (SPA) Simulation. Dynamic client-side routing, state management, and seamless transitions.">
+    <title>FlowAI Workspace - Single Page Application (SPA)</title>
     
     <link rel="stylesheet" href="styles.css">
-    <script src="script.js" defer></script>
-    <script src="chat.js" defer></script>
+    <script src="app.js" defer></script>
 </head>
 <body>
     <!-- 1. ACCESSIBILITY: Skip to Main Content Link -->
-    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <a href="#app-view" class="skip-link">Skip to main content</a>
 
     <!-- ARIA Live Announcer for Screen Readers -->
     <div id="aria-announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
 
-    <!-- 2. TOP NAVBAR (Semantic Header Landmark) -->
+    <!-- 2. TOP NAVBAR (Semantic Header & SPA Navigation Landmark) -->
     <header class="navbar" role="banner">
-        <a href="index.html" class="logo" aria-label="FlowAI Workspace Home">
+        <a href="#/chat" class="logo" aria-label="FlowAI Workspace SPA Home">
             <svg class="fluid-logo" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
                 <rect width="36" height="36" rx="8" fill="#0B57D0"/>
                 <path d="M11 12H25M11 18H21M11 24H17" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
             </svg>
-            <span>FlowAI Workspace</span>
+            <div class="logo-meta">
+                <span class="logo-title">FlowAI</span>
+                <span class="spa-badge">SPA</span>
+            </div>
         </a>
         
-        <nav aria-label="Main Navigation" role="navigation">
+        <!-- SPA Client-Side Navigation -->
+        <nav aria-label="Main SPA Navigation" role="navigation">
             <ul class="nav-links" id="nav-links">
-                <li><a href="index.html" class="nav-link active" aria-current="page">💬 Chat</a></li>
-                <li><a href="prompts.html" class="nav-link">💡 Prompts</a></li>
-                <li><a href="history.html" class="nav-link">🕒 History</a></li>
-                <li><a href="settings.html" class="nav-link">⚙️ Settings</a></li>
+                <li><a href="#/chat" class="nav-link active" data-route="/chat" aria-current="page">💬 Chat</a></li>
+                <li><a href="#/prompts" class="nav-link" data-route="/prompts">💡 Prompts</a></li>
+                <li><a href="#/history" class="nav-link" data-route="/history">🕒 History</a></li>
+                <li><a href="#/settings" class="nav-link" data-route="/settings">⚙️ Settings</a></li>
             </ul>
         </nav>
 
         <div class="header-actions">
+            <!-- Accessible Theme Toggle Button -->
             <button id="theme-toggle-btn" class="icon-btn" title="Toggle Light / Dark Mode" aria-label="Toggle Color Theme">
                 <span id="theme-icon" aria-hidden="true">🌙</span>
             </button>
+            
+            <!-- Mobile Menu Toggle Button -->
             <button id="menu-toggle" class="menu-toggle" aria-expanded="false" aria-controls="nav-links" aria-label="Toggle navigation menu">
                 <span class="bar" aria-hidden="true"></span>
                 <span class="bar" aria-hidden="true"></span>
@@ -48,162 +54,48 @@
         </div>
     </header>
 
-    <!-- 3. MAIN APP LAYOUT (CSS Grid Landmark Structure) -->
-    <div class="app-layout">
+    <!-- 3. MAIN APP LAYOUT (CSS Grid) -->
+    <div class="app-layout" id="app-layout">
         
-        <!-- SIDEBAR (Complementary Landmark) -->
-        <aside class="sidebar" role="complementary" aria-label="Sidebar Navigation & Controls">
-            <button id="new-chat-btn" class="new-chat-btn" accesskey="n" aria-label="Start new chat session (Keyboard shortcut: Alt+N)">
+        <!-- SIDEBAR (Always available or conditionally toggled by view) -->
+        <aside class="sidebar" id="app-sidebar" role="complementary" aria-label="Sidebar Sessions">
+            <button id="new-chat-btn" class="new-chat-btn" accesskey="n" aria-label="Start new chat session (Shortcut: Alt+N)">
                 <span aria-hidden="true">+</span> New Chat <kbd class="kbd-shortcut" aria-hidden="true">Alt+N</kbd>
             </button>
             
             <section class="sidebar-section" aria-labelledby="sessions-heading">
                 <div class="sidebar-section-header">
                     <h2 id="sessions-heading" class="sidebar-title">Recent Conversations</h2>
-                    <span id="session-count" class="badge" aria-label="3 saved sessions">3</span>
+                    <span id="session-count" class="badge" aria-label="Saved sessions count">0</span>
                 </div>
-                <ul id="session-list" class="session-list" role="list">
-                    <!-- Dynamic sessions rendered by chat.js with roving tabindex -->
-                </ul>
-            </section>
-
-            <!-- Accessibility Quick Controls in Sidebar -->
-            <section class="a11y-sidebar-widget" aria-labelledby="a11y-heading">
-                <h3 id="a11y-heading" class="sidebar-title">♿ Accessibility Tools</h3>
-                <div class="a11y-controls">
-                    <button id="font-increase-btn" class="a11y-btn" aria-label="Increase text size">A+</button>
-                    <button id="font-reset-btn" class="a11y-btn" aria-label="Reset text size">A</button>
-                    <button id="high-contrast-btn" class="a11y-btn" aria-label="Toggle High Contrast Mode">Contrast</button>
-                </div>
+                <!-- Dynamic Session List Rendered by app.js -->
+                <ul id="sidebar-sessions" class="session-list" role="list"></ul>
             </section>
 
             <div class="sidebar-footer">
                 <div class="model-badge" role="status">
                     <span class="status-dot" aria-hidden="true"></span>
-                    <span>Status: <strong>WCAG 2.1 AA Compliant</strong></span>
+                    <span id="active-model-display">Gemini 2.5 Flash</span>
                 </div>
             </div>
         </aside>
 
-        <!-- 4. MAIN WORKSPACE (Main Landmark) -->
-        <main class="chat-workspace" id="main-content" role="main">
-            
-            <!-- Performance & Web Vitals Audit Banner -->
-            <section class="metrics-banner" aria-labelledby="audit-heading">
-                <div class="metrics-header">
-                    <h2 id="audit-heading">⚡ Lighthouse Performance & Accessibility Score</h2>
-                    <span class="score-pill">100 / 100</span>
-                </div>
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <span class="metric-label">Largest Contentful Paint (LCP)</span>
-                        <span class="metric-val" id="metric-lcp">0.42s</span>
-                        <span class="metric-status good">✓ Fast</span>
-                    </div>
-                    <div class="metric-card">
-                        <span class="metric-label">First Contentful Paint (FCP)</span>
-                        <span class="metric-val" id="metric-fcp">0.28s</span>
-                        <span class="metric-status good">✓ Optimal</span>
-                    </div>
-                    <div class="metric-card">
-                        <span class="metric-label">Cumulative Layout Shift (CLS)</span>
-                        <span class="metric-val" id="metric-cls">0.000</span>
-                        <span class="metric-status good">✓ Zero Shift</span>
-                    </div>
-                    <div class="metric-card">
-                        <span class="metric-label">Color Contrast Ratio</span>
-                        <span class="metric-val">8.2 : 1</span>
-                        <span class="metric-status good">✓ WCAG AAA</span>
-                    </div>
-                </div>
-            </section>
-
-            <!-- ACCESSIBLE STARTER PROMPTS -->
-            <section class="starter-prompts-section" aria-labelledby="templates-heading">
-                <div class="section-title-row">
-                    <h2 id="templates-heading" class="section-h2">Starter Templates (Optimized Vectors)</h2>
-                    <p class="section-desc">Click any card to populate the prompt field with descriptive accessibility instructions.</p>
-                </div>
-                
-                <div class="starter-prompts" role="region" aria-label="Quick prompt suggestions">
-                    
-                    <button class="starter-card" data-title="Performance Auditor" data-prompt="Analyze this code for performance bottlenecks, memory leaks, and accessible semantic structures: " aria-label="Use Performance Auditor template">
-                        <div class="card-icon-box" aria-hidden="true">⚡</div>
-                        <div class="card-body">
-                            <h3>Performance Audit</h3>
-                            <p>Identify render bottlenecks, un-debounced listeners, and memory leaks.</p>
-                            <span class="tag">Performance</span>
-                        </div>
-                    </button>
-
-                    <button class="starter-card" data-title="A11y Auditor" data-prompt="Audit this web component for WCAG 2.1 AA accessibility guidelines, focus states, and ARIA roles: " aria-label="Use Accessibility Auditor template">
-                        <div class="card-icon-box" aria-hidden="true">♿</div>
-                        <div class="card-body">
-                            <h3>A11y & ARIA Review</h3>
-                            <p>Check color contrast, keyboard tab order, and screen reader announcements.</p>
-                            <span class="tag">Accessibility</span>
-                        </div>
-                    </button>
-
-                    <button class="starter-card" data-title="Semantic Refactor" data-prompt="Refactor this HTML markup into pure semantic HTML5 with appropriate landmark roles: " aria-label="Use Semantic Refactor template">
-                        <div class="card-icon-box" aria-hidden="true">🏗️</div>
-                        <div class="card-body">
-                            <h3>Semantic Structure</h3>
-                            <p>Replace generic divs with semantic headers, mains, and aside tags.</p>
-                            <span class="tag">HTML5</span>
-                        </div>
-                    </button>
-
-                    <button class="starter-card" data-title="Core Web Vitals" data-prompt="Optimize this webpage for Google Core Web Vitals (LCP, FID/INP, CLS) and meta SEO: " aria-label="Use Core Web Vitals template">
-                        <div class="card-icon-box" aria-hidden="true">🚀</div>
-                        <div class="card-body">
-                            <h3>Core Web Vitals</h3>
-                            <p>Improve critical rendering path, font display swap, and asset preloading.</p>
-                            <span class="tag">Optimization</span>
-                        </div>
-                    </button>
-
-                </div>
-            </section>
-
-            <!-- ACCESSIBLE CHAT THREAD -->
-            <section class="chat-container" aria-labelledby="chat-heading">
-                <div class="chat-header-bar">
-                    <h2 id="chat-heading" class="chat-title">Conversation Thread</h2>
-                    <button id="clear-chat-btn" class="btn-clear" aria-label="Clear all messages in current conversation">Clear Chat</button>
-                </div>
-
-                <div class="chat-thread" id="chat-thread" role="log" aria-live="polite" aria-label="Chat messages history">
-                    <!-- Injected by chat.js -->
-                </div>
-
-                <!-- ACCESSIBLE CHAT INPUT FORM -->
-                <form id="chat-form" class="chat-input-bar" role="search" aria-label="Chat prompt form">
-                    <label for="chat-input" class="sr-only">Enter your prompt for FlowAI</label>
-                    <input 
-                        type="text" 
-                        id="chat-input" 
-                        placeholder="Type your prompt or press Alt+N for a new chat..." 
-                        autocomplete="off"
-                        required
-                        aria-required="true"
-                    >
-                    <button type="submit" id="send-btn" class="send-btn" disabled aria-label="Send prompt to FlowAI">
-                        <span>Send</span>
-                        <span aria-hidden="true">➔</span>
-                    </button>
-                </form>
-            </section>
-
+        <!-- 4. SPA DYNAMIC VIEW CONTAINER (Client-Side Router Mount Target) -->
+        <main id="app-view" class="spa-view-container" role="main" tabindex="-1">
+            <!-- Dynamic view components (Chat, Prompts, History, Settings) mounted here by app.js -->
         </main>
+
     </div>
 
-    <!-- TOAST NOTIFICATIONS (Aria Live Region) -->
+    <!-- 5. GLOBAL MODAL CONTAINER -->
+    <div id="app-modal-root"></div>
+
+    <!-- 6. TOAST NOTIFICATION CONTAINER (ARIA Live Region) -->
     <div id="toast-container" class="toast-container" role="status" aria-live="polite" aria-atomic="true"></div>
 
-    <!-- 5. FOOTER (Contentinfo Landmark) -->
+    <!-- 7. FOOTER (Contentinfo Landmark) -->
     <footer class="footer" role="contentinfo">
-        <p>&copy; 2026 FlowAI Workspace &bull; Week 4 Performance & Accessibility Milestone &bull; Built by Bharath Kumar</p>
+        <p>&copy; 2026 FlowAI Workspace &bull; Week 5 Single Page Application (SPA) &bull; Built by Bharath Kumar</p>
     </footer>
 </body>
 </html>

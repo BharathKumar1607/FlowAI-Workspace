@@ -1,75 +1,93 @@
-# FlowAI Workspace - Week 4: Enhancing Web Page Performance and Accessibility ⚡♿
+# FlowAI Workspace - Week 5: Single Page Application (SPA) Simulation 🚀⚡
 
-This directory contains the completed **Week 4 Task** for the Frontend Web Developer Internship at Yuva.
+This repository contains the completed **Week 5 Final Project** for the Frontend Web Developer Internship at Yuva: **Developing a Single Page Application (SPA) Simulation**.
 
 ---
 
 ## 🎯 Task Objective
-Optimize the FlowAI Workspace web application for maximum **performance (speed, efficiency, minimal layout shifts)** and **comprehensive web accessibility (WCAG 2.1 AA compliance)**, ensuring a fast, inclusive experience for all users, including individuals using screen readers, keyboard-only navigation, and assistive technologies.
+Simulate a full-featured, small-scale **Single Page Application (SPA)** that dynamically loads and displays modular views (`Chat`, `Prompts Library`, `Conversation History`, `Settings`) without triggering full browser page reloads.
+
+The application combines:
+- **Semantic HTML5** as the primary dynamic shell and accessibility foundation.
+- **Modern Vanilla CSS** featuring glassmorphic aesthetics, fluid transitions, and WCAG 2.1 AAA high-contrast light/dark themes.
+- **Vanilla JavaScript (ES6+)** orchestrating client-side routing, centralized reactive state management, DOM component injection, and browser history synchronization.
 
 ---
 
-## 🏆 Audit & Benchmark Results
+## 📁 Project Architecture & File Structure
 
-| Metric Category | Tool / Standard | Score / Status | Notes |
-| :--- | :--- | :--- | :--- |
-| **Performance** | Google Lighthouse | **100 / 100** | Zero render-blocking resources; defer JS; optimized SVGs. |
-| **Accessibility (a11y)** | Lighthouse & WAVE | **100 / 100** | Full WCAG 2.1 Level AA & AAA contrast compliance (8.2:1 ratio). |
-| **Best Practices** | Lighthouse | **100 / 100** | HTTPS-ready, modern semantic markup, UTF-8 encoded. |
-| **SEO** | Lighthouse | **100 / 100** | Structured heading hierarchy, meta descriptions, mobile viewport. |
-| **Largest Contentful Paint (LCP)** | Core Web Vitals | **< 0.5s** | Instant first render with local assets and CSS custom properties. |
-| **Cumulative Layout Shift (CLS)** | Core Web Vitals | **0.000** | Static dimension reservations prevent content jumping. |
-
----
-
-## ♿ Comprehensive Accessibility Features (WCAG 2.1 AA)
-
-1. **Skip-to-Content Link (`.skip-link`)**:
-   * Positioned off-screen by default; appears immediately upon pressing `Tab` to allow keyboard users to bypass navigation and jump straight into `#main-content`.
-
-2. **Semantic HTML5 Landmark Architecture**:
-   * Uses `<header role="banner">`, `<nav role="navigation">`, `<main role="main">`, `<aside role="complementary">`, `<article role="article">`, and `<footer role="contentinfo">`.
-
-3. **Screen Reader Live Announcements (`#aria-announcer`)**:
-   * An invisible `aria-live="polite"` region broadcasts status updates, AI responses, and toast notifications to assistive technologies like NVDA, JAWS, and VoiceOver without stealing focus.
-
-4. **Keyboard Navigation & Roving Tabindex**:
-   * **Global Shortcut:** Press `Alt + N` from anywhere on the page to instantly create a new chat session.
-   * **Session Navigation:** Arrow keys (`↑` / `↓`) navigate through conversation items with proper focus management.
-   * **Focus Outlines:** High-visibility 3px focus rings (`:focus-visible`) ensure keyboard users never lose track of their position.
-
-5. **Color Contrast & Assistive Controls**:
-   * All color pairings exceed the WCAG AAA threshold of **7:1** (our primary palette delivers an **8.2:1** ratio).
-   * Sidebar assistive widgets: **A+ Font Scaling** and a one-click **High Contrast Mode** toggle.
-
-6. **Reduced Motion Mode (`prefers-reduced-motion`)**:
-   * Automatically disables animations and smooth scrolling for users with vestibular or motion sensitivities.
+```text
+├── index.html       # Main SPA Container & Shell (Navbar, Sidebar, Mount Point, Modals, Toasts)
+├── styles.css       # Unified Design System (CSS Custom Properties, Glassmorphism, SPA Transitions)
+├── app.js           # Client-Side Router, LocalStorage State Store, Dynamic View Renderers
+├── README.md        # Technical Documentation, Architecture Blueprint & Run Instructions
+└── FlowAI_SPA_Week5.zip # Complete Packaged Project Deliverable
+```
 
 ---
 
-## ⚡ Performance Optimization Engineering
+## 🌟 Key Technical Features
 
-1. **Elimination of Render-Blocking Resources**:
-   * JavaScript is loaded non-blockingly using `<script src="script.js" defer></script>`.
-   * Replaced heavy remote HTTP image calls with lightweight inline scalable SVG vectors.
+### 1. Client-Side Routing (SPA Navigation)
+* **Zero Full Page Reloads:** Uses the `window.location.hash` and `hashchange` API to deliver instant route transitions without requesting new documents from the server.
+* **Route Map:**
+  * `#/chat` &mdash; Interactive AI chat workspace with conversation sessions, starter prompt chips, typing animations, and clipboard copy.
+  * `#/prompts` &mdash; Filterable prompt engineering library with real-time text search, category pills, custom prompt modal with focus trapping, and "Use in Chat" direct routing.
+  * `#/history` &mdash; Comprehensive conversation logs with aggregate statistics, keyword search, one-click session resumption, and text/JSON transcript downloads via the **Blob API**.
+  * `#/settings` &mdash; Model parameters (temperature, model selection), theme toggles, font scaling, API key visibility, and storage footprint diagnostics.
+* **Layout Adaptability:** The layout automatically detects the active route and adapts grid templates (e.g., hiding or showing the sidebar smoothly).
 
-2. **Event Delegation & Debouncing**:
-   * Event listeners on starter cards and session lists use single parent container delegation, saving memory and eliminating CPU layout thrashing.
-   * Input keystroke validation is debounced to avoid micro-stutters during typing.
+### 2. Centralized Reactive State Store
+* Implements a `StateStore` class managing:
+  * `sessions`: Array of chat threads with timestamps, role badges, and unique IDs.
+  * `currentSessionId`: Active conversation pointer.
+  * `prompts`: Built-in and user-created prompt templates.
+  * `settings`: Theme mode, base font size, model selection, temperature, and API keys.
+* Automatically syncs state changes to `localStorage` (`flowai_spa_state_v1`).
 
-3. **Cumulative Layout Shift (CLS) Elimination**:
-   * Sized SVG elements (`width="36" height="36"`) and rigid Grid templates eliminate visual shifts during asset hydration.
+### 3. Glassmorphic Aesthetics & Transitions
+* **Smooth View Fade-in:** CSS keyframe animations (`@keyframes viewFadeIn`) execute on route change for a polished native-app feel.
+* **Glassmorphic Navigation:** Utilizes `backdrop-filter: blur(12px)` and subtle transparent alpha borders.
+* **Typing Indicator:** Dynamic pulsing 3-dot animation simulating real-time inference latency.
+
+### 4. Comprehensive Accessibility (WCAG 2.1 AAA Compliant)
+* **Screen Reader Route Announcer:** An `aria-live="polite"` region alerts visually impaired users when route views change.
+* **Programmatic Focus Management:** Shifting focus smoothly to `<main id="app-view">` upon route transition so screen readers start reading the new view content.
+* **Skip to Main Content Link:** First focusable element for rapid keyboard navigation.
+* **Accessible Modals:** Dialog overlay with `role="dialog"`, `aria-modal="true"`, focus trapping, and `Escape` key close listener.
+* **Keyboard Shortcuts:**
+  * `Alt + N` &mdash; Spawns a new chat session from any view.
+  * `Enter` &mdash; Submits chat message / triggers active card.
+  * `Escape` &mdash; Closes modals.
 
 ---
 
-## 🛠️ How to Run & Verify
+## 🚀 How to Run the Application
 
-1. Open `week4/` in your browser: double-click [`week4/index.html`](file:///c:/Bharath/Yuva/web%20Development/week4/index.html).
-2. **Keyboard Test:** Press `Tab` repeatedly to observe the "Skip to main content" link and the high-visibility focus rings.
-3. **Shortcut Test:** Press `Alt + N` on your keyboard to instantly spawn a new chat session.
-4. **Assistive Test:** Click `A+` in the sidebar to scale text size, or click `Contrast` to toggle high-contrast mode.
-5. **Lighthouse Audit:** Open Chrome DevTools (`F12`), navigate to the **Lighthouse** tab, select **Desktop**, and click **Analyze page load** to verify the 100/100 scores!
+1. **Option A: Direct Browser Execution (Zero Build Tools Required)**
+   * Simply double-click [`index.html`](file:///c:/Bharath/Yuva/web%20Development/index.html) or open it in any modern web browser (Google Chrome, Microsoft Edge, Firefox, Safari).
+   * Since hash routing (`#/chat`) is utilized, the application runs natively from local file paths (`file:///`) without requiring a local web server!
+
+2. **Option B: Live Server / Dev Server**
+   * If you prefer running through an HTTP server:
+     ```bash
+     npx serve .
+     # or
+     python -m http.server 8000
+     ```
+   * Open `http://localhost:8000` in your browser.
 
 ---
 
-*Developed by Bharath Kumar for the Yuva Web Development Internship (Week 4).*
+## 🧪 Testing the SPA Flow
+
+1. **Navigation Test:** Click between **💬 Chat**, **💡 Prompts**, **🕒 History**, and **⚙️ Settings** in the top navigation bar. Notice the URL updates (`#/prompts`, etc.) and the view transitions instantaneously without a white flash or page reload.
+2. **Browser History Test:** Click the browser's native **Back** and **Forward** buttons. The SPA maintains history and navigates between views seamlessly.
+3. **Chat Simulation Test:** Send a message or click a starter card in `#/chat`. Observe the animated typing indicator and the contextual AI response.
+4. **Prompt-to-Chat Routing:** Navigate to `#/prompts`, find a prompt, and click **"Use in Chat"**. The router navigates directly to `#/chat` and pre-populates the input field.
+5. **Session Export Test:** Navigate to `#/history` and click **"Export All (JSON)"** or the download button on a session to verify client-side Blob file generation.
+6. **Theme & Font Scaling:** Go to `#/settings` or click the navbar theme icon (🌙/☀️) to toggle high-contrast modes and live font size scaling.
+
+---
+
+*Developed by Bharath Kumar for the Yuva Web Development Internship (Week 5 Final Project).*
