@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="FlowAI Workspace - Accessible and Searchable AI Prompt Engineering Library.">
+    <title>FlowAI Workspace - Prompt Library</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
+    <script src="prompts.js" defer></script>
+</head>
+<body>
+    <!-- 1. ACCESSIBILITY: Skip to Main Content Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- ARIA Live Announcer for Screen Readers -->
+    <div id="aria-announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- 2. TOP NAVBAR (Semantic Header Landmark) -->
+    <header class="navbar" role="banner">
+        <a href="index.html" class="logo" aria-label="FlowAI Workspace Home">
+            <svg class="fluid-logo" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                <rect width="36" height="36" rx="8" fill="#0B57D0"/>
+                <path d="M11 12H25M11 18H21M11 24H17" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+            <span>FlowAI Workspace</span>
+        </a>
+        
+        <nav aria-label="Main Navigation" role="navigation">
+            <ul class="nav-links" id="nav-links">
+                <li><a href="index.html" class="nav-link">💬 Chat</a></li>
+                <li><a href="prompts.html" class="nav-link active" aria-current="page">💡 Prompts</a></li>
+                <li><a href="history.html" class="nav-link">🕒 History</a></li>
+                <li><a href="settings.html" class="nav-link">⚙️ Settings</a></li>
+            </ul>
+        </nav>
+
+        <div class="header-actions">
+            <button id="theme-toggle-btn" class="icon-btn" title="Toggle Light / Dark Mode" aria-label="Toggle Color Theme">
+                <span id="theme-icon" aria-hidden="true">🌙</span>
+            </button>
+            <button id="menu-toggle" class="menu-toggle" aria-expanded="false" aria-controls="nav-links" aria-label="Toggle navigation menu">
+                <span class="bar" aria-hidden="true"></span>
+                <span class="bar" aria-hidden="true"></span>
+                <span class="bar" aria-hidden="true"></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- 3. MAIN PAGE CONTENT (Main Landmark) -->
+    <main class="page-container" id="main-content" role="main">
+        
+        <!-- Page Header -->
+        <div class="page-header">
+            <div>
+                <h1>💡 Prompt Library & Catalog</h1>
+                <p>Explore curated prompt templates or create your own custom prompt personas.</p>
+            </div>
+            <button id="open-create-prompt-btn" class="btn btn-primary" aria-haspopup="dialog">+ Add Custom Prompt</button>
+        </div>
+
+        <!-- Search & Filter Controls -->
+        <section class="search-filter-bar" aria-label="Prompt search and filtering">
+            <div class="search-box">
+                <label for="prompt-search-input" class="sr-only">Search prompt templates by keyword</label>
+                <span class="search-icon" aria-hidden="true">🔍</span>
+                <input type="text" id="prompt-search-input" placeholder="Search prompts by keyword, description, or topic..." autocomplete="off">
+            </div>
+
+            <div class="category-pills" role="tablist" aria-label="Filter prompts by category">
+                <button class="pill-btn active" data-category="all" role="tab" aria-selected="true">All Categories</button>
+                <button class="pill-btn" data-category="coding" role="tab" aria-selected="false">Coding & Tech</button>
+                <button class="pill-btn" data-category="writing" role="tab" aria-selected="false">Writing & Content</button>
+                <button class="pill-btn" data-category="data" role="tab" aria-selected="false">SQL & Data</button>
+                <button class="pill-btn" data-category="productivity" role="tab" aria-selected="false">Productivity</button>
+            </div>
+        </section>
+
+        <!-- Prompts Grid Container -->
+        <section class="prompts-grid" id="prompts-grid" aria-label="Available prompt templates">
+            <!-- Dynamic prompt cards injected by prompts.js -->
+        </section>
+
+    </main>
+
+    <!-- 4. MODAL DIALOG: CREATE CUSTOM PROMPT (WCAG 2.1 Focus-Trapped Dialog) -->
+    <div id="create-prompt-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-hidden="true">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2 id="modal-title" style="font-size: 1.25rem;">Create Custom Prompt</h2>
+                <button id="close-modal-btn" class="modal-close-btn" aria-label="Close dialog">&times;</button>
+            </div>
+            <form id="create-prompt-form" style="display: flex; flex-direction: column; gap: 16px;">
+                <div class="form-group">
+                    <label class="form-label" for="modal-prompt-title">Prompt Title *</label>
+                    <input type="text" id="modal-prompt-title" class="form-control" placeholder="e.g. Accessibility Component Auditor" required aria-required="true">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="modal-prompt-category">Category *</label>
+                    <select id="modal-prompt-category" class="form-control" required aria-required="true">
+                        <option value="Coding">Coding</option>
+                        <option value="Writing">Writing</option>
+                        <option value="Data">Data</option>
+                        <option value="Productivity">Productivity</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="modal-prompt-desc">Short Description *</label>
+                    <input type="text" id="modal-prompt-desc" class="form-control" placeholder="Brief 1-line explanation of what it does" required aria-required="true">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="modal-prompt-text">Prompt Instructions *</label>
+                    <textarea id="modal-prompt-text" class="form-control" rows="4" placeholder="Enter the exact prompt template instructions..." required aria-required="true"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="cancel-modal-btn" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save to Library</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast-container" class="toast-container" role="status" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- 5. FOOTER (Contentinfo Landmark) -->
+    <footer class="footer" role="contentinfo">
+        <p>&copy; 2026 FlowAI Workspace &bull; Prompt Discovery System &bull; Developed by Bharath Kumar</p>
+    </footer>
+</body>
+</html>

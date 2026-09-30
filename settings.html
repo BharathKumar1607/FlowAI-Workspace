@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="FlowAI Workspace - Accessible AI Model Configuration and Visual Preferences.">
+    <title>FlowAI Workspace - Settings</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
+    <script src="settings.js" defer></script>
+</head>
+<body>
+    <!-- 1. ACCESSIBILITY: Skip to Main Content Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- ARIA Live Announcer for Screen Readers -->
+    <div id="aria-announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- 2. TOP NAVBAR (Semantic Header Landmark) -->
+    <header class="navbar" role="banner">
+        <a href="index.html" class="logo" aria-label="FlowAI Workspace Home">
+            <svg class="fluid-logo" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                <rect width="36" height="36" rx="8" fill="#0B57D0"/>
+                <path d="M11 12H25M11 18H21M11 24H17" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+            <span>FlowAI Workspace</span>
+        </a>
+        
+        <nav aria-label="Main Navigation" role="navigation">
+            <ul class="nav-links" id="nav-links">
+                <li><a href="index.html" class="nav-link">💬 Chat</a></li>
+                <li><a href="prompts.html" class="nav-link">💡 Prompts</a></li>
+                <li><a href="history.html" class="nav-link">🕒 History</a></li>
+                <li><a href="settings.html" class="nav-link active" aria-current="page">⚙️ Settings</a></li>
+            </ul>
+        </nav>
+
+        <div class="header-actions">
+            <button id="theme-toggle-btn" class="icon-btn" title="Toggle Light / Dark Mode" aria-label="Toggle Color Theme">
+                <span id="theme-icon" aria-hidden="true">🌙</span>
+            </button>
+            <button id="menu-toggle" class="menu-toggle" aria-expanded="false" aria-controls="nav-links" aria-label="Toggle navigation menu">
+                <span class="bar" aria-hidden="true"></span>
+                <span class="bar" aria-hidden="true"></span>
+                <span class="bar" aria-hidden="true"></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- 3. MAIN PAGE CONTENT (Main Landmark) -->
+    <main class="page-container" id="main-content" role="main">
+        
+        <div class="page-header">
+            <div>
+                <h1>⚙️ Settings & Model Preferences</h1>
+                <p>Configure interface themes, AI model behavior, temperature sliders, and credentials.</p>
+            </div>
+            <button type="submit" form="settings-form" class="btn btn-primary" aria-label="Save all configuration preferences">💾 Save All Changes</button>
+        </div>
+
+        <form id="settings-form" aria-label="Application Settings Form">
+            <div class="settings-grid">
+                
+                <!-- CARD 1: THEME & DISPLAY -->
+                <div class="settings-card" role="region" aria-labelledby="appearance-heading">
+                    <h2 id="appearance-heading" class="settings-card-title">🎨 Appearance & Interface</h2>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="setting-theme">Color Theme</label>
+                        <span class="form-desc" id="theme-desc">Select between a clean light appearance or a high-contrast dark mode.</span>
+                        <select id="setting-theme" class="form-control" aria-describedby="theme-desc">
+                            <option value="light">Light Theme (Default - 8.2:1 Contrast)</option>
+                            <option value="dark">Dark Theme (Night Mode - WCAG AA)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="setting-high-contrast" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="checkbox" id="setting-high-contrast" style="width: 18px; height: 18px; accent-color: var(--accent-color);">
+                            <span>Enable Ultra High Contrast Mode</span>
+                        </label>
+                        <span class="form-desc">Applies maximum black/white contrasts exceeding WCAG AAA standards.</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="setting-font-size">Interface Font Scaling</label>
+                        <span class="form-desc" id="font-desc">Adjust typography scale across dashboard and chat bubbles.</span>
+                        <select id="setting-font-size" class="form-control" aria-describedby="font-desc">
+                            <option value="sm">Small (14px Compact)</option>
+                            <option value="md" selected>Medium (16px Standard)</option>
+                            <option value="lg">Large (18px Accessible)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- CARD 2: AI MODEL CONFIGURATION -->
+                <div class="settings-card" role="region" aria-labelledby="model-heading">
+                    <h2 id="model-heading" class="settings-card-title">🤖 AI Model Parameters</h2>
+
+                    <div class="form-group">
+                        <label class="form-label" for="setting-model">Active Intelligence Model</label>
+                        <span class="form-desc" id="model-desc">Choose the foundational model for chat generation.</span>
+                        <select id="setting-model" class="form-control" aria-describedby="model-desc">
+                            <option value="Gemini 2.5 Flash">Google Gemini 2.5 Flash (Fast & Low Latency)</option>
+                            <option value="Gemini 1.5 Pro">Google Gemini 1.5 Pro (Complex Reasoning)</option>
+                            <option value="Claude 3.5 Sonnet">Anthropic Claude 3.5 Sonnet</option>
+                            <option value="GPT-4o">OpenAI GPT-4o Omni</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="setting-temperature">Creativity (Temperature)</label>
+                        <span class="form-desc" id="temp-desc">Lower values are focused and deterministic; higher values are creative.</span>
+                        <div class="range-slider-wrapper">
+                            <span style="font-size: 0.8rem; color: var(--text-secondary);" aria-hidden="true">0.0 (Precise)</span>
+                            <input 
+                                type="range" 
+                                id="setting-temperature" 
+                                min="0.0" 
+                                max="1.0" 
+                                step="0.1" 
+                                value="0.7"
+                                aria-label="Model Temperature Slider"
+                                aria-valuemin="0.0"
+                                aria-valuemax="1.0"
+                                aria-valuenow="0.7"
+                                aria-describedby="temp-desc"
+                            >
+                            <span style="font-size: 0.8rem; color: var(--text-secondary);" aria-hidden="true">1.0 (Creative)</span>
+                            <span class="slider-val-badge" id="temp-value-display" aria-live="polite">0.7</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="setting-system-prompt">System Instructions (Persona)</label>
+                        <span class="form-desc" id="system-desc">Custom background instructions injected into every prompt.</span>
+                        <textarea id="setting-system-prompt" class="form-control" rows="3" placeholder="e.g. You are FlowAI, a helpful, precise engineering tutor..." aria-describedby="system-desc"></textarea>
+                    </div>
+                </div>
+
+                <!-- CARD 3: API CREDENTIALS -->
+                <div class="settings-card" role="region" aria-labelledby="api-heading">
+                    <h2 id="api-heading" class="settings-card-title">🔑 API Keys & Security</h2>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="setting-api-key">Google AI Studio API Key</label>
+                        <span class="form-desc" id="api-desc">Stored safely in your local browser cache (localStorage). Never sent to third parties.</span>
+                        <div class="password-input-wrapper">
+                            <input type="password" id="setting-api-key" class="form-control" placeholder="AIzaSy..." aria-describedby="api-desc">
+                            <button type="button" id="toggle-api-key-btn" class="eye-toggle-btn" title="Toggle Visibility" aria-label="Show API Key">👁️</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 4: DATA RESET -->
+                <div class="settings-card" role="region" aria-labelledby="reset-heading">
+                    <h2 id="reset-heading" class="settings-card-title" style="color: var(--danger-color);">⚠️ Data Storage & Factory Reset</h2>
+                    
+                    <p style="font-size: 0.88rem; color: var(--text-secondary);">
+                        Resetting local data will wipe all conversation archives, created custom prompts, and custom model settings.
+                    </p>
+
+                    <button type="button" id="factory-reset-btn" class="btn btn-danger" style="align-self: flex-start; margin-top: auto;" aria-label="Reset all local data back to factory defaults">
+                        Reset All Data to Factory Defaults
+                    </button>
+                </div>
+
+            </div>
+        </form>
+
+    </main>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast-container" class="toast-container" role="status" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- 4. FOOTER (Contentinfo Landmark) -->
+    <footer class="footer" role="contentinfo">
+        <p>&copy; 2026 FlowAI Workspace &bull; Configuration Subsystem &bull; Developed by Bharath Kumar</p>
+    </footer>
+</body>
+</html>

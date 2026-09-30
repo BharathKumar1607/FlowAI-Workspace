@@ -1,11 +1,11 @@
 /**
- * FlowAI Workspace - History & Archive Engine (Week 3)
- * Powers history.html:
- * - Live keyword search through conversation transcripts
- * - Metrics dashboard (Total Sessions, Messages, Last Active)
- * - "Resume in Chat" session loading
- * - File download export (JSON / TXT) via Blob API
- * - Granular and bulk conversation deletion
+ * FlowAI Workspace - History Archive Engine (Week 4: Performance & Accessibility)
+ * Author: Bharath Kumar
+ * Features:
+ * - Debounced transcript search across all conversations
+ * - Client-side non-blocking file generation (Blob API)
+ * - Accessible metrics dashboard with live ARIA regions
+ * - Granular session deletion with screen reader announcements
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -44,14 +44,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 4. Relative Time Formatter
     function formatTime(isoString) {
         if (!isoString) return 'Recent';
         const date = new Date(isoString);
         return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
     }
 
-    // 5. Render History List
+    // 4. Render History List (Semantic Articles & Accessible Buttons)
     function renderHistory() {
         if (!historyList) return;
         historyList.innerHTML = '';
@@ -66,27 +65,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (filtered.length === 0) {
             historyList.innerHTML = `
-                <div style="text-align: center; padding: 48px 16px; color: var(--text-secondary); background: var(--bg-surface); border-radius: var(--radius-md); border: 1px solid var(--border-color);">
-                    <div style="font-size: 2.5rem; margin-bottom: 8px;">📂</div>
-                    <h3>No conversations found</h3>
-                    <p style="font-size: 0.9rem; margin-top: 4px;">No archived sessions match your search query.</p>
+                <div style="text-align: center; padding: 48px 16px; color: var(--text-secondary); background: var(--bg-surface); border-radius: var(--radius-md); border: 1px solid var(--border-color);" role="alert">
+                    <div style="font-size: 2.5rem; margin-bottom: 8px;" aria-hidden="true">📂</div>
+                    <h3>No archived conversations found</h3>
+                    <p style="font-size: 0.9rem; margin-top: 4px;">Try searching for a different keyword or start a new chat.</p>
                 </div>
             `;
             return;
         }
 
         filtered.forEach(sess => {
-            const item = document.createElement('div');
+            const item = document.createElement('article');
             item.className = 'history-item';
+            item.setAttribute('role', 'article');
+            item.setAttribute('aria-label', `Conversation archive: ${sess.title}`);
 
             const lastMessage = sess.messages && sess.messages.length > 0 
                 ? sess.messages[sess.messages.length - 1].text 
-                : 'No messages yet in this session.';
+                : 'No messages in this conversation.';
             const snippet = lastMessage.length > 110 ? lastMessage.substring(0, 107) + '...' : lastMessage;
 
             item.innerHTML = `
                 <div class="history-item-info">
-                    <h3 class="history-item-title">${escapeHtml(sess.title)}</h3>
+                    <h2 class="history-item-title">${escapeHtml(sess.title)}</h2>
                     <div class="history-item-meta">
                         <span>🕒 ${formatTime(sess.updatedAt)}</span>
                         <span>💬 ${sess.messages ? sess.messages.length : 0} messages</span>
@@ -96,40 +97,41 @@ document.addEventListener('DOMContentLoaded', () => {
                     </p>
                 </div>
                 <div class="history-actions">
-                    <button class="btn btn-secondary resume-chat-btn" data-id="${sess.id}">💬 Resume</button>
-                    <button class="btn btn-secondary export-chat-btn" data-id="${sess.id}">⬇ Export</button>
-                    <button class="btn btn-secondary delete-chat-btn" data-id="${sess.id}" style="color: var(--danger-color);">🗑️</button>
+                    <button class="btn btn-secondary resume-chat-btn" data-id="${sess.id}" aria-label="Resume conversation ${escapeHtml(sess.title)}">💬 Resume</button>
+                    <button class="btn btn-secondary export-chat-btn" data-id="${sess.id}" aria-label="Export ${escapeHtml(sess.title)} conversation as text">⬇ Export</button>
+                    <button class="btn btn-secondary delete-chat-btn" data-id="${sess.id}" style="color: var(--danger-color);" aria-label="Delete ${escapeHtml(sess.title)} conversation">🗑️</button>
                 </div>
             `;
 
-            // Event: Resume in Chat
+            // Resume in Chat
             item.querySelector('.resume-chat-btn').addEventListener('click', () => {
                 localStorage.setItem('flowai_current_session_id', sess.id);
                 window.location.href = 'index.html';
             });
 
-            // Event: Export Session to TXT file
+            // Export to TXT
             item.querySelector('.export-chat-btn').addEventListener('click', () => {
                 exportSessionAsTxt(sess);
             });
 
-            // Event: Delete Session
+            // Delete Session
             item.querySelector('.delete-chat-btn').addEventListener('click', () => {
                 deleteSession(sess.id);
             });
 
             historyList.appendChild(item);
         });
+
+        window.announceToScreenReader(`Displayed ${filtered.length} archived conversations`);
     }
 
-    // Helper: Escape HTML
     function escapeHtml(str) {
         return str.replace(/[&<>'"]/g, 
             tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
         );
     }
 
-    // 6. Delete Session Handler
+    // 5. Delete Session
     function deleteSession(id) {
         let sessions = getSessions();
         if (sessions.length <= 1) {
@@ -149,11 +151,11 @@ document.addEventListener('DOMContentLoaded', () => {
         window.showToast('Conversation removed from archive', 'info');
     }
 
-    // 7. Export Single Session as TXT
+    // 6. Export Session as TXT (Blob API)
     function exportSessionAsTxt(session) {
-        let content = `FlowAI Workspace - Conversation Export\n`;
+        let content = `FlowAI Workspace - Accessible Transcript Export\n`;
         content += `Session Title: ${session.title}\n`;
-        content += `Export Date: ${new Date().toLocaleString()}\n`;
+        content += `Timestamp: ${new Date().toLocaleString()}\n`;
         content += `====================================================\n\n`;
 
         if (session.messages && session.messages.length > 0) {
@@ -162,27 +164,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 content += `[${speaker}]:\n${m.text}\n\n`;
             });
         } else {
-            content += `(No messages recorded in this session)\n`;
+            content += `(No messages recorded)\n`;
         }
 
         downloadFile(content, `${session.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_transcript.txt`, 'text/plain');
-        window.showToast('Downloaded conversation transcript', 'success');
+        window.showToast('Transcript downloaded (.txt)', 'success');
     }
 
-    // 8. Export All Sessions as JSON
+    // 7. Export All as JSON
     if (exportAllBtn) {
         exportAllBtn.addEventListener('click', () => {
             const sessions = getSessions();
             const dataStr = JSON.stringify(sessions, null, 2);
-            downloadFile(dataStr, `flowai_chat_archive_${Date.now()}.json`, 'application/json');
-            window.showToast('Exported complete conversation archive (JSON)', 'success');
+            downloadFile(dataStr, `flowai_archive_${Date.now()}.json`, 'application/json');
+            window.showToast('Exported complete archive (.json)', 'success');
         });
     }
 
-    // 9. Clear All History Handler
+    // 8. Clear All History
     if (clearAllHistoryBtn) {
         clearAllHistoryBtn.addEventListener('click', () => {
-            if (confirm('Are you sure you want to clear your entire chat history? This cannot be undone.')) {
+            if (confirm('Are you sure you want to reset all conversation history?')) {
                 const freshSession = [{
                     id: 'sess_' + Date.now(),
                     title: 'New Workspace Session',
@@ -197,7 +199,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Generic File Downloader (Blob API)
     function downloadFile(content, fileName, contentType) {
         const blob = new Blob([content], { type: contentType });
         const url = URL.createObjectURL(blob);
@@ -210,12 +211,14 @@ document.addEventListener('DOMContentLoaded', () => {
         URL.revokeObjectURL(url);
     }
 
-    // 10. Search Input Event
+    // 9. Debounced Live Search
     if (searchInput) {
-        searchInput.addEventListener('input', (e) => {
+        const handleSearch = window.debounce((e) => {
             searchQuery = e.target.value.toLowerCase().trim();
             renderHistory();
-        });
+        }, 120);
+
+        searchInput.addEventListener('input', handleSearch);
     }
 
     // Initial Render

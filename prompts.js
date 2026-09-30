@@ -1,10 +1,11 @@
 /**
- * FlowAI Workspace - Prompts Library Engine (Week 3)
- * Powers prompts.html:
- * - Live search & category filtering
- * - "Use in Chat" prompt transfer via sessionStorage
- * - Copy prompt to clipboard
- * - Interactive modal form to create custom prompts saved to localStorage
+ * FlowAI Workspace - Prompts Engine (Week 4: Performance & Accessibility)
+ * Author: Bharath Kumar
+ * Features:
+ * - Debounced live search filtering (zero CPU layout thrashing)
+ * - Accessible category tabs with ARIA state updates
+ * - Modal dialog with keyboard focus trapping and Escape key dismiss
+ * - Non-blocking clipboard copying with screen reader announcements
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -27,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return JSON.parse(localStorage.getItem('flowai_prompts') || '[]');
     }
 
-    // 3. Render Filtered Prompts
+    // 3. Render Prompts (Accessible Semantic Nodes)
     function renderPrompts() {
         if (!promptsGrid) return;
         promptsGrid.innerHTML = '';
@@ -43,29 +44,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (filtered.length === 0) {
             promptsGrid.innerHTML = `
-                <div style="grid-column: 1 / -1; text-align: center; padding: 48px 16px; color: var(--text-secondary);">
-                    <div style="font-size: 2.5rem; margin-bottom: 8px;">🔍</div>
-                    <h3>No matching prompts found</h3>
-                    <p style="font-size: 0.9rem; margin-top: 4px;">Try searching for a different keyword or create your own prompt template.</p>
+                <div style="grid-column: 1 / -1; text-align: center; padding: 48px 16px; color: var(--text-secondary);" role="alert">
+                    <div style="font-size: 2.5rem; margin-bottom: 8px;" aria-hidden="true">🔍</div>
+                    <h3>No matching prompt templates found</h3>
+                    <p style="font-size: 0.9rem; margin-top: 4px;">Try a different keyword or create a custom prompt.</p>
                 </div>
             `;
             return;
         }
 
         filtered.forEach(p => {
-            const card = document.createElement('div');
+            const card = document.createElement('article');
             card.className = 'prompt-card';
+            card.setAttribute('role', 'article');
+            card.setAttribute('aria-label', `Prompt template: ${p.title}`);
 
             card.innerHTML = `
                 <div class="prompt-card-header">
-                    <h3 class="prompt-card-title">${escapeHtml(p.title)}</h3>
-                    <span class="starter-card-tag">${escapeHtml(p.category)}</span>
+                    <h2 class="prompt-card-title">${escapeHtml(p.title)}</h2>
+                    <span class="tag" aria-label="Category: ${escapeHtml(p.category)}">${escapeHtml(p.category)}</span>
                 </div>
                 <p class="prompt-card-desc">${escapeHtml(p.description)}</p>
-                <div class="prompt-snippet">${escapeHtml(p.prompt)}</div>
+                <div class="prompt-snippet" aria-label="Prompt preview text">${escapeHtml(p.prompt)}</div>
                 <div class="prompt-card-footer">
-                    <button class="btn btn-secondary copy-prompt-btn" data-prompt="${escapeHtml(p.prompt)}">📋 Copy</button>
-                    <button class="btn btn-primary use-prompt-btn" data-prompt="${escapeHtml(p.prompt)}">💬 Use in Chat</button>
+                    <button class="btn btn-secondary copy-prompt-btn" data-prompt="${escapeHtml(p.prompt)}" aria-label="Copy ${escapeHtml(p.title)} prompt text">📋 Copy</button>
+                    <button class="btn btn-primary use-prompt-btn" data-prompt="${escapeHtml(p.prompt)}" aria-label="Use ${escapeHtml(p.title)} prompt in chat">💬 Use in Chat</button>
                 </div>
             `;
 
@@ -73,13 +76,13 @@ document.addEventListener('DOMContentLoaded', () => {
             card.querySelector('.copy-prompt-btn').addEventListener('click', (e) => {
                 const text = e.target.getAttribute('data-prompt');
                 navigator.clipboard.writeText(text).then(() => {
-                    e.target.innerHTML = '✓ Copied!';
+                    e.target.textContent = '✓ Copied!';
                     window.showToast('Prompt copied to clipboard', 'success');
-                    setTimeout(() => { e.target.innerHTML = '📋 Copy'; }, 2000);
+                    setTimeout(() => { e.target.textContent = '📋 Copy'; }, 2000);
                 });
             });
 
-            // Event: Use in Chat (redirects to index.html with prompt loaded)
+            // Event: Use in Chat
             card.querySelector('.use-prompt-btn').addEventListener('click', (e) => {
                 const text = e.target.getAttribute('data-prompt');
                 sessionStorage.setItem('flowai_pending_prompt', text);
@@ -88,6 +91,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             promptsGrid.appendChild(card);
         });
+
+        window.announceToScreenReader(`Displayed ${filtered.length} prompt templates`);
     }
 
     // Helper: Escape HTML
@@ -97,45 +102,85 @@ document.addEventListener('DOMContentLoaded', () => {
         );
     }
 
-    // 4. Live Search Handler
+    // 4. Debounced Live Search Input
     if (searchInput) {
-        searchInput.addEventListener('input', (e) => {
+        const handleSearch = window.debounce((e) => {
             searchQuery = e.target.value.toLowerCase().trim();
             renderPrompts();
-        });
+        }, 120);
+
+        searchInput.addEventListener('input', handleSearch);
     }
 
-    // 5. Category Filter Pills
+    // 5. Category Filter Pills (Accessible Tablist)
     categoryPills.forEach(pill => {
         pill.addEventListener('click', () => {
-            categoryPills.forEach(p => p.classList.remove('active'));
+            categoryPills.forEach(p => {
+                p.classList.remove('active');
+                p.setAttribute('aria-selected', 'false');
+            });
             pill.classList.add('active');
+            pill.setAttribute('aria-selected', 'true');
             currentCategory = pill.getAttribute('data-category');
             renderPrompts();
+            window.showToast(`Filtered by ${pill.textContent}`, 'info');
         });
     });
 
-    // 6. Modal Open/Close Controls
+    // 6. Accessible Modal Management with Focus Trapping & Escape Key
+    let lastActiveElement = null;
+
     function openModal() {
-        if (modalOverlay) modalOverlay.classList.add('open');
+        lastActiveElement = document.activeElement;
+        if (modalOverlay) {
+            modalOverlay.classList.add('open');
+            modalOverlay.setAttribute('aria-hidden', 'false');
+            const firstInput = document.getElementById('modal-prompt-title');
+            if (firstInput) firstInput.focus();
+            window.announceToScreenReader('Create Custom Prompt dialog opened. Press Escape to cancel.');
+        }
     }
+
     function closeModal() {
-        if (modalOverlay) modalOverlay.classList.remove('open');
-        if (createPromptForm) createPromptForm.reset();
+        if (modalOverlay) {
+            modalOverlay.classList.remove('open');
+            modalOverlay.setAttribute('aria-hidden', 'true');
+            if (createPromptForm) createPromptForm.reset();
+            if (lastActiveElement) lastActiveElement.focus();
+            window.announceToScreenReader('Dialog closed');
+        }
     }
 
     if (openModalBtn) openModalBtn.addEventListener('click', openModal);
     if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
     if (cancelModalBtn) cancelModalBtn.addEventListener('click', closeModal);
 
-    // Close on overlay click outside card
-    if (modalOverlay) {
-        modalOverlay.addEventListener('click', (e) => {
-            if (e.target === modalOverlay) closeModal();
-        });
-    }
+    // Keyboard Accessibility: Escape key and Focus Trapping
+    document.addEventListener('keydown', (e) => {
+        if (!modalOverlay || !modalOverlay.classList.contains('open')) return;
 
-    // 7. Form Submission: Add Custom Prompt
+        if (e.key === 'Escape') {
+            closeModal();
+            return;
+        }
+
+        // Focus Trapping: keep Tab within modal
+        if (e.key === 'Tab') {
+            const focusables = modalOverlay.querySelectorAll('input, select, textarea, button');
+            const first = focusables[0];
+            const last = focusables[focusables.length - 1];
+
+            if (e.shiftKey && document.activeElement === first) {
+                e.preventDefault();
+                last.focus();
+            } else if (!e.shiftKey && document.activeElement === last) {
+                e.preventDefault();
+                first.focus();
+            }
+        }
+    });
+
+    // 7. Modal Form Submission
     if (createPromptForm) {
         createPromptForm.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -164,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             closeModal();
             renderPrompts();
-            window.showToast(`Custom prompt "${title}" added!`, 'success');
+            window.showToast(`Custom prompt "${title}" added to library!`, 'success');
         });
     }
 
