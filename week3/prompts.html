@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlowAI Workspace - Prompt Library</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
+    <script src="prompts.js" defer></script>
+</head>
+<body>
+    <!-- 1. TOP NAVBAR -->
+    <header class="navbar">
+        <a href="index.html" class="logo">
+            <img src="https://via.placeholder.com/40x40/0b57d0/ffffff?text=F" alt="FlowAI Logo" class="fluid-logo">
+            <span>FlowAI Workspace</span>
+        </a>
+        
+        <nav aria-label="Main Navigation">
+            <ul class="nav-links" id="nav-links">
+                <li><a href="index.html" class="nav-link">💬 Chat</a></li>
+                <li><a href="prompts.html" class="nav-link active">💡 Prompts</a></li>
+                <li><a href="history.html" class="nav-link">🕒 History</a></li>
+                <li><a href="settings.html" class="nav-link">⚙️ Settings</a></li>
+            </ul>
+        </nav>
+
+        <div class="header-actions">
+            <button id="theme-toggle-btn" class="icon-btn" title="Toggle Light/Dark Theme" aria-label="Toggle Theme">
+                <span id="theme-icon">🌙</span>
+            </button>
+            <button id="menu-toggle" class="menu-toggle" aria-expanded="false" aria-label="Open Mobile Menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- 2. MAIN PAGE CONTENT -->
+    <main class="page-container">
+        
+        <!-- Page Header -->
+        <div class="page-header">
+            <div>
+                <h1>💡 Prompt Library & Catalog</h1>
+                <p>Explore curated prompt templates or create your own custom prompt personas.</p>
+            </div>
+            <button id="open-create-prompt-btn" class="btn btn-primary">+ Add Custom Prompt</button>
+        </div>
+
+        <!-- Search & Filter Controls -->
+        <section class="search-filter-bar">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="prompt-search-input" placeholder="Search prompts by keyword, description, or topic..." autocomplete="off">
+            </div>
+
+            <div class="category-pills">
+                <button class="pill-btn active" data-category="all">All Categories</button>
+                <button class="pill-btn" data-category="coding">Coding & Tech</button>
+                <button class="pill-btn" data-category="writing">Writing & Content</button>
+                <button class="pill-btn" data-category="data">SQL & Data</button>
+                <button class="pill-btn" data-category="productivity">Productivity</button>
+            </div>
+        </section>
+
+        <!-- Prompts Grid Container -->
+        <section class="prompts-grid" id="prompts-grid">
+            <!-- Dynamic prompt cards injected by prompts.js -->
+        </section>
+
+    </main>
+
+    <!-- 3. MODAL DIALOG: CREATE CUSTOM PROMPT -->
+    <div id="create-prompt-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2 id="modal-title" style="font-size: 1.25rem;">Create Custom Prompt</h2>
+                <button id="close-modal-btn" class="modal-close-btn" aria-label="Close dialog">&times;</button>
+            </div>
+            <form id="create-prompt-form" style="display: flex; flex-direction: column; gap: 16px;">
+                <div class="form-group">
+                    <label class="form-label" for="modal-prompt-title">Prompt Title *</label>
+                    <input type="text" id="modal-prompt-title" class="form-control" placeholder="e.g. Docker Compose Architect" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="modal-prompt-category">Category *</label>
+                    <select id="modal-prompt-category" class="form-control" required>
+                        <option value="Coding">Coding</option>
+                        <option value="Writing">Writing</option>
+                        <option value="Data">Data</option>
+                        <option value="Productivity">Productivity</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="modal-prompt-desc">Short Description *</label>
+                    <input type="text" id="modal-prompt-desc" class="form-control" placeholder="Brief 1-line explanation of what it does" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="modal-prompt-text">Prompt Instructions *</label>
+                    <textarea id="modal-prompt-text" class="form-control" rows="4" placeholder="Enter the exact prompt template text..." required></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="cancel-modal-btn" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save to Library</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+    <!-- 4. FOOTER -->
+    <footer>
+        <p>&copy; 2026 FlowAI Workspace &bull; Prompt Discovery System &bull; Developed by Bharath Kumar</p>
+    </footer>
+</body>
+</html>
